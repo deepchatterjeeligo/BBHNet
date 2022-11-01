@@ -1,4 +1,6 @@
 import logging
+import operator
+from functools import reduce
 from pathlib import Path
 from typing import List
 
@@ -62,26 +64,22 @@ def main(
         stop,
     )
 
-    # create copy of first ifo segment list to start
-    intersection = segments[f"{ifos[0]}:{state_flag}"].active.copy()
-
-    # loop over ifos finding segment intersection
-    for ifo in ifos:
-        intersection &= segments[f"{ifo}:{state_flag}"].active
-
-    # find first continuous segment of minimum length
-    segment_lengths = np.array(
-        [float(seg[1] - seg[0]) for seg in intersection]
+    contiguous_intersecting_segments = reduce(
+        operator.and_, [v.active for v in segments.values()]
     )
-    continuous_segments = np.where(segment_lengths >= minimum_length)[0]
+    relevant_segments = filter(
+        lambda seg: float(seg[1] - seg[0]) >= minimum_length,
+        contiguous_intersecting_segments,
+    )
 
-    if len(continuous_segments) == 0:
+    for s in relevant_segments:
+        break  # choose first of such segments
+    try:
+        segment = s
+    except NameError:
         raise ValueError(
             "No segments of minimum length, not producing background"
         )
-
-    # choose first of such segments
-    segment = intersection[continuous_segments[0]]
 
     logging.info(
         "Querying coincident, continuous segment "

@@ -33,45 +33,9 @@ def veto(times: list, segmentlist: SegmentList):
     Returns:
     - keep_bools: list of booleans; True for the triggers to keep
     """
-
-    # find args that sort times and create sorted times array
-    sorted_args = np.argsort(times)
-    sorted_times = times[sorted_args]
-
-    # initiate array of args to keep;
-    # refers to original args of unsorted times array;
-    # begin with all args being kept
-
-    keep_bools = np.ones(times.shape[0], dtype=bool)
-
-    # initiate loop variables; extract first segment
-    j = 0
-    a, b = segmentlist[j]
-    i = 0
-
-    while i < sorted_times.size:
-        t = sorted_times[i]
-
-        # if before start, not in vetoed segment; move to next trigger now
-        if t < a:
-
-            # original arg is the ith sorted arg
-            i += 1
-            continue
-
-        # if after end, find the next segment and check this trigger again
-        if t > b:
-            j += 1
-            try:
-                a, b = segmentlist[j]
-                continue
-            except IndexError:
-                break
-
-        # otherwise it must be in veto segment; move on to next trigger
-        original_arg = sorted_args[i]
-        keep_bools[original_arg] = False
-        i += 1
+    keep_bools = [
+        not segmentlist.intersects_segment(Segment(t, t)) for t in times
+    ]
 
     return keep_bools
 
