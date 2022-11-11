@@ -10,12 +10,12 @@ Installing dependencies from lock file
 .
 ```
 
-It also assumes that the training data files are present, and are set using the environment variable `DATA_DIR`.
+It also assumes that the training data files are present. For a quickstart, set the `BASE_DIR` and `DATA_DIR` environment variables, where `DATA_DIR` contains the signal, background, and glitch dataset, e.g.
 ```
 $ ls ${DATA_DIR}
 glitches.h5  H1_background.h5  L1_background.h5  signals.h5
 ```
-Also, set the variable `BASE_DIR` to point to where models, logs, other files are stored during training. During training it will look something like this,
+`BASE_DIR` points to the location to store models, logs, other files. During training it will look something like this,
 ```
 $ ls ${BASE_DIR}
 log  training
@@ -29,16 +29,15 @@ $ tail -f ${BASE_DIR}/log/train.log
 .
 ```
 
-# Launching a training run
-The training executable is called `train`. The training can be run using the configuration mentioned in the `pyproject.toml` in the root of the `sandbox` by running
+## Launching a run
+The training executable is called `train`. For a quickstart, the training can be run using the configuration mentioned in the `pyproject.toml` in the root of the `sandbox` by running (assuming appropriate compute environment)
 ```
 $ train --typeo .:train:resnet
 ```
+This uses the project configuration stored in the `pyproject.toml` file at the root of the `sandbox`.
 
-While the entire configuration can be provided during training, the project configuration is stored in the `pyproject.toml` file at the root of the `sandbox`. Hence, the training can be launched using the above.
-
-# Configuration 
-Fine-grained control can, however, be done using the command-line arguments. The output of `train --help` shows the configuration.
+## Configuration 
+Fine-grained control can be done using the command-line arguments. The output of `train --help` shows the configuration.
 ```
 $ train --help
 usage: main [-h] --hanford-background HANFORD_BACKGROUND --livingston-background LIVINGSTON_BACKGROUND
